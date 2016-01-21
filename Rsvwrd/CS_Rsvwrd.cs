@@ -63,6 +63,30 @@ namespace Rsvwrd
                 return ((int)_rsvcode);
             }
         }
+        private Boolean _Is_namespace;
+        public Boolean Is_namespace
+        {
+            get
+            {
+                return (_Is_namespace);
+            }
+            set
+            {
+                _Is_namespace = value;
+            }
+        }
+        private Boolean _Is_class;
+        public Boolean Is_class
+        {
+            get
+            {
+                return (_Is_class);
+            }
+            set
+            {
+                _Is_class = value;
+            }
+        }
 
         // 予約語１：クラス
         private string[] _RsvTable1 =
@@ -176,6 +200,8 @@ namespace Rsvwrd
             _empty = true;
 
             _rsvcode = RsvCode.RSV_NONE;    // 予約語：未定義
+            _Is_namespace = false;          // [Namespace]未検出
+            _Is_class = false;              // [Class]未検出
         }
         #endregion
 
@@ -263,6 +289,21 @@ namespace Rsvwrd
                         }
                     }
                 }
+
+                // [Namespace][Class]検出確認
+                if (_rsvcode == RsvCode.RSV_OTHER && _wbuf == "namespace")
+                {   // [namespace]検出？
+                    _Is_namespace = true;       // [namespace]検出
+                    _Is_class = false;
+                }
+                else
+                {
+                    if (_rsvcode == RsvCode.RSV_CLASS && _wbuf == "class")
+                    {   // [namespace]検出？
+                        _Is_class = true;       // [class]検出
+                        _Is_namespace = false;
+                    }
+                }
             }
         }
         public void Exec(String msg)
@@ -341,6 +382,21 @@ namespace Rsvwrd
                                 break;
                             }
                         }
+                    }
+                }
+
+                // [Namespace][Class]検出確認
+                if (_rsvcode == RsvCode.RSV_OTHER && _wbuf == "namespace")
+                {   // [namespace]検出？
+                    _Is_namespace = true;       // [namespace]検出
+                    _Is_class = false;
+                }
+                else
+                {
+                    if (_rsvcode == RsvCode.RSV_CLASS && _wbuf == "class")
+                    {   // [namespace]検出？
+                        _Is_class = true;       // [class]検出
+                        _Is_namespace = false;
                     }
                 }
             }
