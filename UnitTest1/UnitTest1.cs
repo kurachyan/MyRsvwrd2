@@ -20,8 +20,16 @@ namespace UnitTest1
             rsvwrd.Clear();
             rsvwrd.Wbuf = "class";
             rsvwrd.Exec();
-
             Assert.IsTrue(rsvwrd.Rsv);
+            Assert.IsTrue(rsvwrd.Is_class);
+            Assert.IsFalse(rsvwrd.Is_namespace);
+            Assert.AreEqual(1, rsvwrd.RsvKind, "RsKind[RSV_CLASS]");
+
+            rsvwrd.Wbuf = "struct";
+            rsvwrd.Exec();
+            Assert.IsTrue(rsvwrd.Rsv);
+            Assert.IsTrue(rsvwrd.Is_class);
+            Assert.IsFalse(rsvwrd.Is_namespace);
             Assert.AreEqual(1, rsvwrd.RsvKind, "RsKind[RSV_CLASS]");
             #endregion
 
@@ -62,6 +70,14 @@ namespace UnitTest1
             rsvwrd.Exec("namespace");
 
             Assert.IsTrue(rsvwrd.Rsv);
+            Assert.IsTrue(rsvwrd.Is_namespace);
+            Assert.IsFalse(rsvwrd.Is_class);
+            Assert.AreEqual(6, rsvwrd.RsvKind, "RsKind[RSV_OTHER]");
+
+            rsvwrd.Exec("void");
+            Assert.IsTrue(rsvwrd.Rsv);
+            Assert.IsTrue(rsvwrd.Is_namespace);
+            Assert.IsFalse(rsvwrd.Is_class);
             Assert.AreEqual(6, rsvwrd.RsvKind, "RsKind[RSV_OTHER]");
             #endregion
 
