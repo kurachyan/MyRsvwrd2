@@ -87,6 +87,31 @@ namespace Rsvwrd
                 _Is_class = value;
             }
         }
+        // '16.02.22 Function情報設定
+        private static Boolean _Is_func;
+        public Boolean Is_func
+        {
+            get
+            {
+                return (_Is_func);
+            }
+            set
+            {
+                _Is_func = value;
+            }
+        }
+        private static int _pos;
+        public int Pos
+        {
+            get
+            {
+                return (_pos);
+            }
+            set
+            {
+                _pos = value;
+            }
+        }
 
         // 予約語１：クラス
         private static readonly string[] _RsvTable1 =
@@ -202,6 +227,7 @@ namespace Rsvwrd
             _rsvcode = RsvCode.RSV_NONE;    // 予約語：未定義
             _Is_namespace = false;          // [Namespace]未検出
             _Is_class = false;              // [Class]未検出
+            _Is_func = false;               // [Function]未検出
         }
         #endregion
 
@@ -299,9 +325,16 @@ namespace Rsvwrd
                 else
                 {
                     if (_rsvcode == RsvCode.RSV_CLASS && _wbuf == "class")
-                    {   // [namespace]検出？
+                    {   // [class]検出？
                         _Is_class = true;       // [class]検出
                         _Is_namespace = false;
+                    }
+                    else
+                    {
+                        if (_rsvcode == RsvCode.RSV_NONE)
+                        {   // 未定義？
+                            Chkfnc(_wbuf);      // [Function]有効確認
+                        }
                     }
                 }
             }
@@ -398,6 +431,13 @@ namespace Rsvwrd
                         _Is_class = true;       // [class]検出
                         _Is_namespace = false;
                     }
+                    else
+                    {
+                        if (_rsvcode == RsvCode.RSV_NONE)
+                        {   // 未定義？
+                            Chkfnc(_wbuf);      // [Function]有効確認
+                        }
+                    }
                 }
             }
         }
@@ -415,6 +455,24 @@ namespace Rsvwrd
             }
 
             _rsvcode = RsvCode.RSV_NONE;    // 予約語：未定義
+        }
+        private void Chkfnc(String _strbuf)
+        {   // [Function]有効確認
+            if (string.IsNullOrEmpty(_strbuf))
+            {   // 設定情報はNULL？ 
+                _empty = true;
+            }
+            else
+            {
+                Boolean _judge = _strbuf.Contains('(');
+                if (_judge)
+                {   // 設定情報は有り？
+                    _pos = _strbuf.IndexOf('(');    // 区切り位置を確認する
+                    _Is_func = true;                // [Function]検出
+                    _Is_namespace = false;
+                    _Is_class = false;
+                }
+            }
         }
         #endregion
     }
